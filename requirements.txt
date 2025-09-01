@@ -1,6 +1,4 @@
-@"
 flask
 gunicorn
 scikit-learn
 joblib
-"@ | Set-Content -Encoding ASCII requirements.txt
