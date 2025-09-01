@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI Health Assistant</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        text-align: center;
+      }
+      .container {
+        margin-top: 100px;
+        background: #c18585;
+        padding: 30px;
+        border-radius: 12px;
+        width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      input[type="text"] {
+        width: 90%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #4caf50;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e7f3fe;
+        border-left: 6px solid #2196f3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🤖 AI Health Assistant</h2>
+      <form method="post">
+        <input
+          type="text"
+          id="symptoms"
+          name="symptoms"
+          placeholder="Enter your symptoms (or use 🎤)"
+          required
+        />
+        <br />
+        <button type="submit">Check</button>
+        <button type="button" onclick="startVoice()">🎤 Speak</button>
+      </form>
+
+      {% if prediction %}
+      <div class="result">
+        <h3>Possible Condition: {{ prediction }}</h3>
+        <p><b>Advice:</b> {{ suggestion }}</p>
+        <button type="button" onclick="speakResult()">🔊 Listen</button>
+      </div>
+      {% endif %}
+    </div>
+
+    <script>
+      // 🎤 Voice Input (Speech-to-Text)
+      function startVoice() {
+        let recognition = new (window.SpeechRecognition ||
+          window.webkitSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.start();
+
+        recognition.onresult = function (event) {
+          document.getElementById("symptoms").value =
+            event.results[0][0].transcript;
+        };
+
+        recognition.onerror = function (event) {
+          alert("Voice input error: " + event.error);
+        };
+      }
+
+      // 🔊 Voice Output (Text-to-Speech)
+      function speakResult() {
+        let condition = "{{ prediction }}";
+        let advice = "{{ suggestion }}";
+
+        let msg = new SpeechSynthesisUtterance(
+          "Possible condition is " + condition + ". " + "Advice: " + advice
+        );
+        msg.lang = "en-US";
+        window.speechSynthesis.speak(msg);
+      }
+    </script>
+  </body>
+</html>
